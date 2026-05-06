@@ -3,225 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional HTML Tester</title>
+    <title>Professional Code Editor</title>
     <style>
-        /* بنیادی سیٹنگز */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body, html {
             height: 100%;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #000000;
-            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #fff;
             overflow: hidden;
         }
 
-        .main-wrapper {
+        /* ایڈیٹر کا ڈیزائن */
+        .main-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
             padding: 10px;
         }
 
-        /* ہیڈر میں فل اسکرین بٹن */
         header {
             padding: 10px;
-            border-bottom: 1px solid #333;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #333;
         }
 
         .fs-btn {
-            background: #444;
-            color: white;
-            border: 1px solid #666;
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        /* ایڈیٹر ایریا */
-        .editor-container {
-            flex: 1;
-            margin-top: 10px;
-            margin-bottom: 70px;
-            display: flex;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100%;
-            background: #111;
+            background: #222;
             color: #fff;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Consolas', monospace;
-            font-size: 16px;
-            resize: none;
-            outline: none;
-        }
-
-        /* نیچے والے بٹنز */
-        .footer-buttons {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 70px;
-            background: #000;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 15px;
-            border-top: 1px solid #333;
-            z-index: 100;
-        }
-
-        .btn {
-            flex: 1;
-            margin: 0 8px;
-            height: 48px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 15px;
+            border: 1px solid #555;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            font-size: 12px;
         }
 
-        .run-btn {
-            background-color: #ffffff;
-            color: #000000;
+        /* رنگین کوڈ دکھانے والا ایریا */
+        .editor-wrapper {
+            flex: 1;
+            position: relative;
+            margin: 15px 0 75px 0;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .clear-btn {
-            background-color: #222;
-            color: #ffffff;
-            border: 1px solid #444;
-        }
-
-        /* رزلٹ اوورلے */
-        #result-overlay {
-            display: none;
-            position: fixed;
+        #backdrop, #code-input {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
-            z-index: 1000;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
             border: none;
+            outline: none;
         }
 
-        .close-btn {
+        #code-input {
+            background: transparent;
+            color: transparent; /* اصل ٹیکسٹ چھپا دیا تاکہ نیچے والا رنگین نظر آئے */
+            caret-color: #fff; /* کرسر نظر آئے گا */
+            z-index: 2;
+        }
+
+        #backdrop {
+            color: #ccc;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* کلر ہائی لائٹنگ */
+        .tag { color: #569cd6; font-weight: bold; } /* نیلے ٹیگز */
+        .attr { color: #9cdcfe; } /* ہلکا نیلا ایٹریبیوٹ */
+        .str { color: #ce9178; } /* اورنج سٹرنگز */
+        .comment { color: #6a9955; } /* سبز کمنٹس */
+
+        /* فوٹر بٹنز */
+        .footer {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 0; left: 0; right: 0;
+            height: 70px;
             background: #000;
-            color: #fff;
+            display: flex;
+            gap: 10px;
+            padding: 10px 15px;
+            border-top: 1px solid #333;
+            z-index: 10;
+        }
+
+        .btn {
+            flex: 1;
             border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            font-size: 14px;
+        }
+
+        .clear-btn { background: #222; color: #fff; border: 1px solid #444; }
+        .run-btn { background: #fff; color: #000; }
+
+        /* رزلٹ اوورلے - صرف کراس بٹن ہوگا */
+        #result-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #fff;
+            z-index: 1000;
+        }
+
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .close-btn {
+            position: fixed;
+            top: 15px; right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            border: none;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            line-height: 40px;
+            text-align: center;
             cursor: pointer;
+            z-index: 1001;
         }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper" id="app-container">
+<div class="main-container">
     <header>
-        <div style="font-weight: bold; letter-spacing: 1px;">CODE TESTER</div>
-        <button class="fs-btn" onclick="toggleFullScreen()">Go Fullscreen</button>
+        <div style="font-size: 14px; color: #888;">Yasir Iqbal Editor</div>
+        <button class="fs-btn" onclick="toggleFS()">Go Fullscreen</button>
     </header>
 
-    <div class="editor-container">
-        <textarea id="code-input" placeholder="یہاں اپنا HTML کوڈ لکھیں..."></textarea>
+    <div class="editor-wrapper">
+        <div id="backdrop"></div>
+        <textarea id="code-input" spellcheck="false" placeholder="Subscribe @Yasiriqbal-01"></textarea>
     </div>
 </div>
 
-<div class="footer-buttons">
-    <button class="btn clear-btn" onclick="clearCode()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        CLEAR
-    </button>
-    <button class="btn run-btn" onclick="runCode()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        RUN CODE
-    </button>
+<div class="footer">
+    <button class="btn clear-btn" onclick="clearCode()">CLEAR</button>
+    <button class="btn run-btn" onclick="runCode()">RUN CODE</button>
 </div>
 
 <div id="result-overlay">
-    <button class="close-btn" onclick="closePreview()">×</button>
+    <div class="close-btn" onclick="closePreview()">×</div>
     <iframe id="output-frame"></iframe>
 </div>
 
 <script>
-    const textarea = document.getElementById('code-input');
-    const appContainer = document.documentElement; // پوری ویب سائٹ کے لیے
+    const input = document.getElementById('code-input');
+    const backdrop = document.getElementById('backdrop');
 
-    // فل اسکرین فنکشن
-    function toggleFullScreen() {
-        if (!document.fullscreenElement) {
-            if (appContainer.requestFullscreen) {
-                appContainer.requestFullscreen();
-            } else if (appContainer.webkitRequestFullscreen) { /* Safari/Chrome Mobile */
-                appContainer.webkitRequestFullscreen();
-            } else if (appContainer.msRequestFullscreen) { /* IE11 */
-                appContainer.msRequestFullscreen();
-            }
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
+    // کلر ہائی لائٹنگ کا فنکشن
+    function updateHighlighting() {
+        let text = input.value;
+        
+        // ایچ ٹی ایم ایل ٹیگز اور ایٹریبیوٹس کو رنگ دینا
+        let highlighted = text
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/(&lt;(?!!--)[^&]+&gt;)/g, '<span class="tag">$1</span>') // ٹیگز
+            .replace(/("(.*?)")/g, '<span class="str">$1</span>') // سٹرنگز
+            .replace(/(&lt;!--.*?--&gt;)/g, '<span class="comment">$1</span>'); // کمنٹس
+
+        backdrop.innerHTML = highlighted;
     }
 
-    // رن کوڈ فنکشن
-    function runCode() {
-        const code = textarea.value;
-        if(code.trim() === "") return;
+    input.addEventListener('input', updateHighlighting);
+    input.addEventListener('scroll', () => {
+        backdrop.scrollTop = input.scrollTop;
+        backdrop.scrollLeft = input.scrollLeft;
+    });
 
+    function runCode() {
+        if(input.value.trim() === "") return;
         document.getElementById('result-overlay').style.display = 'block';
         const iframe = document.getElementById('output-frame');
         const dest = iframe.contentDocument || iframe.contentWindow.document;
         dest.open();
-        dest.write(code);
+        dest.write(input.value);
         dest.close();
     }
 
-    // کلیئر کوڈ فنکشن
     function clearCode() {
-        textarea.value = "";
-        textarea.focus();
+        input.value = "";
+        backdrop.innerHTML = "";
+        input.focus();
     }
 
-    // کلوز رزلٹ فنکشن
     function closePreview() {
         document.getElementById('result-overlay').style.display = 'none';
         document.getElementById('output-frame').src = "about:blank";
+    }
+
+    function toggleFS() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
     }
 </script>
 
