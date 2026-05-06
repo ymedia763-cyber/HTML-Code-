@@ -3,119 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Code Editor</title>
+    <title>Fixed HTML Editor</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body, html {
             height: 100%;
-            font-family: 'Courier New', monospace;
+            font-family: 'Consolas', 'Courier New', monospace;
             background-color: #000;
             color: #fff;
             overflow: hidden;
         }
 
-        /* ایڈیٹر کا ڈیزائن */
         .main-container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            padding: 10px;
         }
 
         header {
-            padding: 10px;
+            padding: 10px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #222;
+            background: #000;
         }
 
         .fs-btn {
-            background: #222;
-            color: #fff;
-            border: 1px solid #555;
-            padding: 6px 12px;
-            border-radius: 4px;
+            background: #1a1a1a;
+            color: #ccc;
+            border: 1px solid #333;
+            padding: 6px 15px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
+            letter-spacing: 1px;
         }
 
-        /* رنگین کوڈ دکھانے والا ایریا */
-        .editor-wrapper {
+        /* ایڈیٹر فکسڈ ایریا */
+        .editor-container {
             flex: 1;
             position: relative;
-            margin: 15px 0 75px 0;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 8px;
+            background: #050505;
             overflow: hidden;
+            display: flex;
         }
 
-        #backdrop, #code-input {
-            position: absolute;
-            top: 0;
-            left: 0;
+        textarea {
             width: 100%;
             height: 100%;
-            padding: 15px;
+            padding: 20px;
             font-size: 16px;
-            font-family: 'Consolas', monospace;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            line-height: 1.6;
+            color: #00d4ff; /* اب کوڈ کا رنگ فکس کر دیا ہے تاکہ بلنک نہ ہو */
+            background: transparent;
             border: none;
             outline: none;
+            resize: none;
+            font-family: 'Consolas', monospace;
+            z-index: 5;
+            /* سکرولنگ کے لیے */
+            overflow-y: auto;
+            white-space: pre;
         }
-
-        #code-input {
-            background: transparent;
-            color: transparent; /* اصل ٹیکسٹ چھپا دیا تاکہ نیچے والا رنگین نظر آئے */
-            caret-color: #fff; /* کرسر نظر آئے گا */
-            z-index: 2;
-        }
-
-        #backdrop {
-            color: #ccc;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* کلر ہائی لائٹنگ */
-        .tag { color: #569cd6; font-weight: bold; } /* نیلے ٹیگز */
-        .attr { color: #9cdcfe; } /* ہلکا نیلا ایٹریبیوٹ */
-        .str { color: #ce9178; } /* اورنج سٹرنگز */
-        .comment { color: #6a9955; } /* سبز کمنٹس */
 
         /* فوٹر بٹنز */
         .footer {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
             height: 70px;
             background: #000;
             display: flex;
-            gap: 10px;
-            padding: 10px 15px;
-            border-top: 1px solid #333;
-            z-index: 10;
+            gap: 12px;
+            padding: 10px 20px;
+            border-top: 1px solid #222;
         }
 
         .btn {
             flex: 1;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            transition: 0.2s;
         }
 
-        .clear-btn { background: #222; color: #fff; border: 1px solid #444; }
+        .clear-btn { background: #1a1a1a; color: #fff; border: 1px solid #333; }
         .run-btn { background: #fff; color: #000; }
 
-        /* رزلٹ اوورلے - صرف کراس بٹن ہوگا */
+        /* رزلٹ اوورلے */
         #result-overlay {
             display: none;
             position: fixed;
@@ -129,17 +108,18 @@
 
         .close-btn {
             position: fixed;
-            top: 15px; right: 15px;
-            background: rgba(0,0,0,0.7);
+            top: 20px; right: 20px;
+            background: rgba(0,0,0,0.8);
             color: #fff;
-            border: none;
-            width: 40px; height: 40px;
+            width: 44px; height: 44px;
             border-radius: 50%;
-            font-size: 24px;
-            line-height: 40px;
-            text-align: center;
+            font-size: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             z-index: 1001;
+            border: 1px solid #444;
         }
     </style>
 </head>
@@ -147,19 +127,18 @@
 
 <div class="main-container">
     <header>
-        <div style="font-size: 14px; color: #888;">Yasir Iqbal Editor</div>
-        <button class="fs-btn" onclick="toggleFS()">Go Fullscreen</button>
+        <div style="font-size: 12px; color: #555;">@Yasiriqbal-01</div>
+        <button class="fs-btn" onclick="toggleFS()">GO FULLSCREEN</button>
     </header>
 
-    <div class="editor-wrapper">
-        <div id="backdrop"></div>
+    <div class="editor-container">
         <textarea id="code-input" spellcheck="false" placeholder="Subscribe @Yasiriqbal-01"></textarea>
     </div>
-</div>
 
-<div class="footer">
-    <button class="btn clear-btn" onclick="clearCode()">CLEAR</button>
-    <button class="btn run-btn" onclick="runCode()">RUN CODE</button>
+    <div class="footer">
+        <button class="btn clear-btn" onclick="clearCode()">CLEAR</button>
+        <button class="btn run-btn" onclick="runCode()">RUN CODE</button>
+    </div>
 </div>
 
 <div id="result-overlay">
@@ -169,52 +148,40 @@
 
 <script>
     const input = document.getElementById('code-input');
-    const backdrop = document.getElementById('backdrop');
 
-    // کلر ہائی لائٹنگ کا فنکشن
-    function updateHighlighting() {
-        let text = input.value;
-        
-        // ایچ ٹی ایم ایل ٹیگز اور ایٹریبیوٹس کو رنگ دینا
-        let highlighted = text
-            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-            .replace(/(&lt;(?!!--)[^&]+&gt;)/g, '<span class="tag">$1</span>') // ٹیگز
-            .replace(/("(.*?)")/g, '<span class="str">$1</span>') // سٹرنگز
-            .replace(/(&lt;!--.*?--&gt;)/g, '<span class="comment">$1</span>'); // کمنٹس
-
-        backdrop.innerHTML = highlighted;
-    }
-
-    input.addEventListener('input', updateHighlighting);
-    input.addEventListener('scroll', () => {
-        backdrop.scrollTop = input.scrollTop;
-        backdrop.scrollLeft = input.scrollLeft;
-    });
-
+    // رن فنکشن
     function runCode() {
         if(input.value.trim() === "") return;
-        document.getElementById('result-overlay').style.display = 'block';
+        
+        const overlay = document.getElementById('result-overlay');
         const iframe = document.getElementById('output-frame');
+        
+        overlay.style.display = 'block';
+        
         const dest = iframe.contentDocument || iframe.contentWindow.document;
         dest.open();
         dest.write(input.value);
         dest.close();
     }
 
+    // کلیئر فنکشن
     function clearCode() {
         input.value = "";
-        backdrop.innerHTML = "";
         input.focus();
     }
 
+    // کلوز فنکشن
     function closePreview() {
         document.getElementById('result-overlay').style.display = 'none';
         document.getElementById('output-frame').src = "about:blank";
     }
 
+    // فل اسکرین فنکشن
     function toggleFS() {
         if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
+            document.documentElement.requestFullscreen().catch(err => {
+                alert("Error: " + err.message);
+            });
         } else {
             document.exitFullscreen();
         }
